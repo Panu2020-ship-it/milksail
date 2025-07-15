@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jagaidevi Mehala Dudh Savsta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #121212; color: #e0e0e0; }
+        .gradient-bg { background: linear-gradient(135deg, #1a1a1a 0%, #2d3436 100%); }
+        .card { background-color: #1e1e1e; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 1px solid #333; }
+        .btn-primary { background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%); }
+        input, select { background-color: #333; color: white; border-color: #444; }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen p-4 relative">
+    <div class="fixed top-4 right-4 bg-gray-800 p-3 rounded-lg text-white shadow-lg">
+        <div class="text-center">
+            <div id="clock" class="text-xl font-bold"></div>
+        </div>
+    </div>
+    <div class="fixed bottom-4 left-4">
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/48e41f9d-0ab8-4703-b90d-111c07f7380a.png" alt="3D Cow" class="rounded-lg shadow-lg w-32 h-32 object-cover">
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/13a2d2c6-4307-4633-9e11-e09da4263860.png" alt="3D Buffalo" class="rounded-lg shadow-lg w-32 h-32 object-cover mt-2">
+    </div>
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-2xl font-bold text-center mb-6">Jagaidevi Mehala Dudh Savsta</h1>
+        
+        <div class="grid md:grid-cols-2 gap-4">
+            <div class="card bg-white p-4 rounded-lg">
+                <h2 class="text-xl font-semibold mb-3">Send SMS to Farmers</h2>
+                <input id="farmerName" type="text" placeholder="Farmer Name" class="w-full p-2 mb-3 border rounded">
+                <input id="farmerCode" type="text" placeholder="Farmer Code" class="w-full p-2 mb-3 border rounded">
+                <div class="grid grid-cols-2 gap-2 mb-3">
+                    <select id="collectionTime" class="p-2 border rounded">
+                        <option value="morning">Morning</option>
+                        <option value="evening">Evening</option>
+                    </select>
+                    <select id="animalType" class="p-2 border rounded">
+                        <option value="cow">Cow</option>
+                        <option value="buffalo">Buffalo</option>
+                    </select>
+                </div>
+                <input id="liters" type="number" placeholder="Liters" class="w-full p-2 mb-3 border rounded">
+                <div class="grid grid-cols-2 gap-2 mb-3">
+                    <input id="snf" type="number" step="0.1" min="3" max="10" placeholder="SNF (3.0-10.0)" class="p-2 border rounded">
+                    <input id="fat" type="number" step="0.1" min="3" max="10" placeholder="Fat (3.0-10.0)" class="p-2 border rounded">
+                    <input id="snfRate" type="number" step="0.1" placeholder="SNF Rate/liter" class="p-2 border rounded">
+                    <input id="fatRate" type="number" step="0.1" placeholder="Fat Rate/kg" class="p-2 border rounded">
+                </div>
+                <button onclick="generateSMS()" class="btn-primary w-full p-2 text-white rounded hover:brightness-110 transition">Generate SMS</button>
+                <div id="smsPreview" class="mt-3 p-3 bg-gray-50 rounded hidden">
+                    <p id="smsContent" class="whitespace-pre"></p>
+                    <div class="grid grid-cols-3 gap-2 mt-3">
+                        <button onclick="sendSMS()" class="btn-primary p-2 text-white rounded">Send SMS</button>
+                        <button onclick="saveSMS()" class="bg-green-600 p-2 text-white rounded">Save</button>
+                        <button onclick="printSMS()" class="bg-blue-600 p-2 text-white rounded">Print</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-white p-4 rounded-lg">
+                <h2 class="text-xl font-semibold mb-3">Daily Report</h2>
+                <input id="reportDate" type="date" class="w-full p-2 mb-3 border rounded">
+                <input id="reportFarmerName" type="text" placeholder="Farmer Name" class="w-full p-2 mb-3 border rounded">
+                <input id="reportFarmerCode" type="text" placeholder="Farmer Code" class="w-full p-2 mb-3 border rounded">
+                <div class="grid grid-cols-2 gap-2 mb-3">
+                    <input id="morningLit" type="number" placeholder="Morning Liters" class="p-2 border rounded">
+                    <input id="eveningLit" type="number" placeholder="Evening Liters" class="p-2 border rounded">
+                </div>
+                <div class="grid grid-cols-2 gap-2 mb-3">
+                    <input id="dailySNF" type="number" step="0.1" min="3" max="10" placeholder="SNF" class="p-2 border rounded">
+                    <input id="dailyFat" type="number" step="0.1" min="3" max="10" placeholder="Fat" class="p-2 border rounded">
+                </div>
+                <button onclick="generateReport()" class="btn-primary w-full p-2 text-white rounded">Generate Report</button>
+                <div id="reportPreview" class="mt-3 p-3 bg-gray-50 rounded hidden">
+                    <div id="reportContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-white p-4 rounded-lg mt-4">
+            <h2 class="text-xl font-semibold mb-3">Transactions</h2>
+            <div class="flex justify-end gap-2 mb-2">
+                <button onclick="generatePDF()" class="bg-red-600 text-white px-3 py-1 rounded">Save as PDF</button>
+                <button onclick="saveTransactions()" class="bg-green-600 text-white px-3 py-1 rounded">Save Data</button>
+            </div>
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-gray-800 text-white">
+                        <th class="p-2 text-left">Date</th>
+                        <th class="p-2 text-left">Farmer Name</th>
+                        <th class="p-2 text-left">Farmer Code</th>
+                        <th class="p-2 text-left">Time</th>
+                        <th class="p-2 text-left">Liters</th>
+                        <th class="p-2 text-left">SNF</th>
+                        <th class="p-2 text-left">Fat</th>
+                        <th class="p-2 text-left">Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="transactions"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('reportDate').valueAsDate = new Date();
+        
+        function getRandomFloat(min, max) {
+            return (Math.random() * (max - min) + min).toFixed(1);
+        }
+
+        function generateSMS() {
+            const name = document.getElementById('farmerName').value;
+            const code = document.getElementById('farmerCode').value;
+            const time = document.getElementById('collectionTime').value;
+            const liters = document.getElementById('liters').value;
+            const snf = document.getElementById('snf').value || getRandomFloat(3, 10);
+            const fat = document.getElementById('fat').value || getRandomFloat(3, 10);
+            
+            document.getElementById('snf').value = snf;
+            document.getElementById('fat').value = fat;
+
+            const snfRate = document.getElementById('snfRate').value;
+            const fatRate = document.getElementById('fatRate').value;
+            const snfAmount = (snfRate * snf * liters / 100).toFixed(2);
+            const fatAmount = (fatRate * fat * liters / 100).toFixed(2);
+            const totalAmount = (parseFloat(snfAmount) + parseFloat(fatAmount)).toFixed(2);
+            
+            const sms = `Dear ${name} (Code: ${code}),\nToday's ${time} milk:\nSNF: ${snf}% (Rs.${snfAmount})\nFat: ${fat}% (Rs.${fatAmount})\nLiters: ${liters}\nTotal Amount: Rs.${totalAmount}\nThank you!\nJagaidevi Mehala`;
+            document.getElementById('smsContent').textContent = sms;
+            document.getElementById('smsPreview').classList.remove('hidden');
+            // Play cow sound
+            const audio = new Audio('https://www.soundjay.com/misc/sounds/cow-moo-01.mp3');
+            audio.play();
+        }
+
+        function sendSMS() {
+            alert('SMS sent to the farmer!');
+            addTransaction();
+            document.getElementById('smsPreview').classList.add('hidden');
+        }
+
+        function generateReport() {
+            const date = document.getElementById('reportDate').value;
+            const name = document.getElementById('reportFarmerName').value;
+            const code = document.getElementById('reportFarmerCode').value;
+            const morning = document.getElementById('morningLit').value;
+            const evening = document.getElementById('eveningLit').value;
+            const snf = document.getElementById('dailySNF').value || getRandomFloat(3, 10);
+            const fat = document.getElementById('dailyFat').value || getRandomFloat(3, 10);
+            
+            document.getElementById('dailySNF').value = snf;
+            document.getElementById('dailyFat').value = fat;
+
+            const total = parseFloat(morning) + parseFloat(evening);
+            const report = `
+                <p><strong>Date:</strong> ${date}</p>
+                <p><strong>Farmer Name:</strong> ${name}</p>
+                <p><strong>Farmer Code:</strong> ${code}</p>
+                <p><strong>Morning:</strong> ${morning} liters</p>
+                <p><strong>Evening:</strong> ${evening} liters</p>
+                <p><strong>Total:</strong> ${total} liters</p>
+                <p><strong>SNF:</strong> ${snf}% (${(snf*total/100).toFixed(2)}kg)</p>
+                <p><strong>Fat:</strong> ${fat}% (${(fat*total/100).toFixed(2)}kg)</p>
+            `;
+            document.getElementById('reportContent').innerHTML = report;
+            document.getElementById('reportPreview').classList.remove('hidden');
+        }
+
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.text('Milk Collection Transactions', 10, 10);
+            doc.text(`Date: ${new Date().toLocaleDateString()}`, 10, 20);
+            doc.text(`Generated by Jagaidevi Mehala Dudh Savsta`, 10, 30);
+            doc.save('transactions.pdf');
+        }
+
+        function saveTransactions() {
+            localStorage.setItem('transactions', document.getElementById('transactions').innerHTML);
+            alert('Transaction data saved!');
+        }
+
+        function addTransaction() {
+            const table = document.getElementById('transactions');
+            const newRow = table.insertRow(0);
+            const time = document.getElementById('collectionTime').value;
+            const date = new Date().toLocaleDateString();
+            const name = document.getElementById('farmerName').value;
+            const code = document.getElementById('farmerCode').value;
+            
+            newRow.innerHTML = `
+                <td class="p-2">${date}</td>
+                <td class="p-2">${name}</td>
+                <td class="p-2">${code}</td>
+                <td class="p-2">${time}</td>
+                <td class="p-2">${document.getElementById('liters').value}</td>
+                <td class="p-2">${document.getElementById('snf').value}</td>
+                <td class="p-2">${document.getElementById('fat').value}</td>
+                <td class="p-2">${totalAmount}</td>
+            `;
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const clock = document.getElementById('clock');
+            clock.textContent = now.toLocaleTimeString();
+            setTimeout(updateClock, 1000);
+        }
+        updateClock();
+
+        function saveSMS() {
+            const sms = document.getElementById('smsContent').textContent;
+            localStorage.setItem(`sms_${Date.now()}`, sms);
+            alert('SMS saved!');
+        }
+
+        function printSMS() {
+            const printWindow = window.open('', '', 'height=600,width=800');
+            printWindow.document.write('<pre>' + document.getElementById('smsContent').textContent + '</pre>');
+            printWindow.document.close();
+            printWindow.print();
+        }
+    </script>
+</body>
+</html>
